@@ -1,0 +1,25 @@
+{
+  "name": "ghxz-service-wxbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ghxz",
+    "weixin",
+    "rebot",
+    "service"
+  ],
+  "author": "yinxin630",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "cz-conventional-changelog": "^1.1.5"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
