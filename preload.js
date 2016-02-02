@@ -15,6 +15,7 @@ function sleep(duration) {
     });
 }
 
+// 主流程
 CO(function* () {
     var hasLogged = false;
     while (!hasLogged) {
@@ -22,21 +23,12 @@ CO(function* () {
         yield sleep(500);
     }
 
+    var getMessagesTask = getAllNewMessages();
     while (true) {
-        var messageChatItem = getNewMessageChatItem();
-        if (messageChatItem) {
-            messageChatItem.click();
-            
-            yield sleep(50);
-            
-            var messageSender = document.querySelector('.title_name');
-            var messages = document.querySelectorAll('.bubble_cont');
-            NativeConsole.log(messages.length);
-            var lastMessage = messages.item(messages.length - 1);
-            NativeConsole.log(lastMessage.textContent);
-        }
+        var newMessages = yield * getMessagesTask();
+        showMessages(newMessages);
 
-        yield sleep(100);
+        yield sleep(1000);
     }
 });
 
@@ -63,11 +55,77 @@ function checkLoginStatus() {
     return false;
 }
 
-function getNewMessageChatItem() {
-    var chatItemDiv = document.querySelector('.chat_item');
-    var unreadMessagesI = chatItemDiv.querySelector('.web_wechat_reddot_middle');
-    if (unreadMessagesI) {
-        return chatItemDiv;
+function getAllNewMessages() {
+    var currentFormMessagesNumber = 0;
+    return function* () {
+        var messages = [];
+        
+        // 开始获取当前窗体消息
+        var currentFormMessages = document.querySelectorAll('.you > .content > .bubble > .bubble_cont > *');
+        var getMessages = getFormNewMessages(currentFormMessages.length - currentFormMessagesNumber);
+        messages.push(...getMessages);
+        currentFormMessagesNumber = currentFormMessages.length;
+        
+        // 开始获取其它窗体消息
+        var newMessageReddots = document.querySelectorAll('.web_wechat_reddot_middle');
+        for (var dIndex = 0; dIndex < newMessageReddots.length; dIndex++) {
+            
+            var reddotNumber = Number.parseInt(newMessageReddots.item(dIndex).textContent)
+            var tempChatForm = newMessageReddots.item(dIndex).parentElement.parentElement;
+
+            tempChatForm.click();
+            yield sleep(50);
+
+            var otherMessages = getFormNewMessages(reddotNumber);
+            messages.push(...otherMessages);
+
+            var currentFormMessages = document.querySelectorAll('.you > .content > .bubble > .bubble_cont > *');
+            currentFormMessagesNumber = currentFormMessages.length;
+        }
+        return messages;
     }
-    return undefined;
+}
+
+function getFormNewMessages(count) {
+    var messages = [];
+    var currentFormMessages = document.querySelectorAll('.you > .content > .bubble > .bubble_cont > *');
+
+    for (var mIndex = 0; mIndex < count; mIndex++) {
+        var TempNewMessage = currentFormMessages.item(currentFormMessages.length - count + mIndex);
+        var newMessage = {};
+
+        newMessage.type = TempNewMessage.attributes.getNamedItem('class').textContent;
+        switch (newMessage.type) {
+            case 'plain': {
+                newMessage.text = TempNewMessage.firstElementChild.textContent;
+                break;
+            }
+            case 'app': {
+                newMessage.href = TempNewMessage.href;
+                newMessage.title = TempNewMessage.children[0].textContent;
+                newMessage.image = TempNewMessage.children[1].src;
+                newMessage.content = TempNewMessage.children[2].textContent;
+                break;
+            }
+        }
+
+        messages.push(newMessage);
+    }
+
+    return messages;
+}
+
+function showMessages(messages) {
+    for (var message of messages) {
+        switch (message.type) {
+            case 'plain': {
+                NativeConsole.log(`收到文本消息，text -> [${message.text}]`);
+                break;
+            }
+            case 'app': {
+                NativeConsole.log(`收到应用消息，href -> [${message.href}]，title -> [${message.title}]，image -> [${message.image}]，content -> [${message.content}]`);
+                break;
+            }
+        }
+    }
 }
