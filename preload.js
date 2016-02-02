@@ -1,4 +1,6 @@
 const CO = require('co');
+const Electron = require('electron');
+const Clipboard = Electron.clipboard;
 
 // 微信网页版替换了console对象，需要再预加载中保留原生console对象
 const NativeConsole = window.console;
@@ -25,7 +27,7 @@ CO(function* () {
 
     var getMessagesTask = getAllNewMessages();
     while (true) {
-        var newMessages = yield * getMessagesTask();
+        var newMessages = yield* getMessagesTask();
         showMessages(newMessages);
 
         yield sleep(1000);
@@ -69,7 +71,7 @@ function getAllNewMessages() {
         // 开始获取其它窗体消息
         var newMessageReddots = document.querySelectorAll('.web_wechat_reddot_middle');
         for (var dIndex = 0; dIndex < newMessageReddots.length; dIndex++) {
-            
+
             var reddotNumber = Number.parseInt(newMessageReddots.item(dIndex).textContent)
             var tempChatForm = newMessageReddots.item(dIndex).parentElement.parentElement;
 
@@ -128,4 +130,17 @@ function showMessages(messages) {
             }
         }
     }
+}
+
+function reply(message) {
+    var editArea = document.querySelector('#editArea');
+    var sendButton = document.querySelector('.btn_send');
+
+    Clipboard.clear();
+    Clipboard.writeText(message.type == 'plain' ? message.content : message.href);
+
+    editArea.focus();
+    document.execCommand('paste');
+
+    sendButton.click();
 }
