@@ -23,8 +23,17 @@ CO(function* () {
     }
 
     while (true) {
-        if (hasNewMessage()) {
-            NativeConsole.log('有新消息');
+        var messageChatItem = getNewMessageChatItem();
+        if (messageChatItem) {
+            messageChatItem.click();
+            
+            yield sleep(50);
+            
+            var messageSender = document.querySelector('.title_name');
+            var messages = document.querySelectorAll('.bubble_cont');
+            NativeConsole.log(messages.length);
+            var lastMessage = messages.item(messages.length - 1);
+            NativeConsole.log(lastMessage.textContent);
         }
 
         yield sleep(100);
@@ -54,10 +63,11 @@ function checkLoginStatus() {
     return false;
 }
 
-function hasNewMessage() {
+function getNewMessageChatItem() {
     var chatItemDiv = document.querySelector('.chat_item');
     var unreadMessagesI = chatItemDiv.querySelector('.web_wechat_reddot_middle');
     if (unreadMessagesI) {
-        return true;
+        return chatItemDiv;
     }
+    return undefined;
 }
