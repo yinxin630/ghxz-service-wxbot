@@ -21,10 +21,17 @@ CO(function* () {
         hasLogged = checkLoginStatus();
         yield sleep(500);
     }
-    NativeConsole.log('登录完毕');
+
+    while (true) {
+        if (hasNewMessage()) {
+            NativeConsole.log('有新消息');
+        }
+
+        yield sleep(100);
+    }
 });
 
-function checkLoginStatus () {
+function checkLoginStatus() {
     var qrcodeDiv = document.querySelector('.qrcode');
     var chatItemDiv = document.querySelector('.chat_item')
 
@@ -45,4 +52,12 @@ function checkLoginStatus () {
         NativeConsole.log('页面未加载完毕');
     }
     return false;
+}
+
+function hasNewMessage() {
+    var chatItemDiv = document.querySelector('.chat_item');
+    var unreadMessagesI = chatItemDiv.querySelector('.web_wechat_reddot_middle');
+    if (unreadMessagesI) {
+        return true;
+    }
 }
