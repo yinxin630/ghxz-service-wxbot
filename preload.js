@@ -100,13 +100,19 @@ function getFormNewMessages(count) {
         switch (newMessage.type) {
             case 'plain': {
                 newMessage.text = TempNewMessage.firstElementChild.textContent;
+                
+                reply(newMessage);
+                
                 break;
             }
             case 'app': {
-                newMessage.href = TempNewMessage.href;
+                newMessage.href = decodeURIComponent(TempNewMessage.href.match(/https%3A%2F%2Fh.ele.me.*/));
                 newMessage.title = TempNewMessage.children[0].textContent;
                 newMessage.image = TempNewMessage.children[1].src;
                 newMessage.content = TempNewMessage.children[2].textContent;
+                
+                reply(newMessage);
+                
                 break;
             }
         }
@@ -137,7 +143,7 @@ function reply(message) {
     var sendButton = document.querySelector('.btn_send');
 
     Clipboard.clear();
-    Clipboard.writeText(message.type == 'plain' ? message.content : message.href);
+    Clipboard.writeText(message.type == 'plain' ? message.text : message.href);
 
     editArea.focus();
     document.execCommand('paste');
