@@ -118,6 +118,17 @@ function getFormNewMessages(count) {
                 
                 break;
             }
+            case 'card': {
+                TempNewMessage.click();
+                var userCardInfo = document.querySelector('#mmpop_profile > .profile_mini > .profile_mini_bd > .nickname_area');
+                var userNickName = userCardInfo.children[1].textContent;
+                
+                userCardInfo.children[0].click();
+                newMessage.nickname = userNickName;
+                newMessage.from = messageFrom;
+                
+                // reply(newMessage);
+            }
         }
 
         messages.push(newMessage);
@@ -136,6 +147,9 @@ function showMessages(messages) {
             case 'app': {
                 NativeConsole.log(`收到应用消息，from -> [${message.from}]，href -> [${message.href}]，title -> [${message.title}]，image -> [${message.image}]，content -> [${message.content}]`);
                 break;
+            }
+            case 'card': {
+                NativeConsole.log(`收到好友请求消息，from -> [${message.from}]，nickname -> [${message.nickname}]`);
             }
         }
     }
