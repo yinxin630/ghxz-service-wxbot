@@ -1,6 +1,11 @@
+'use strict';
+
 const CO = require('co');
 const Electron = require('electron');
 const Clipboard = Electron.clipboard;
+const Plain = require('./messages/plain.js');
+const App = require('./messages/app.js');
+const Card = require('./messages/card.js');
 
 // 微信网页版替换了console对象，需要再预加载中保留原生console对象
 const NativeConsole = window.console;
@@ -94,40 +99,35 @@ function getFormNewMessages(count) {
     var messageFrom = document.querySelector('.title_name').textContent;
 
     for (var mIndex = 0; mIndex < count; mIndex++) {
-        var TempNewMessage = currentFormMessages.item(currentFormMessages.length - count + mIndex);
-        var newMessage = {};
-
-        newMessage.type = TempNewMessage.attributes.getNamedItem('class').textContent;
-        switch (newMessage.type) {
+        var tempNewMessage = currentFormMessages.item(currentFormMessages.length - count + mIndex);
+        var newMessage = undefined;
+        
+        var type = tempNewMessage.attributes.getNamedItem('class').textContent;
+        switch (type) {
             case 'plain': {
-                newMessage.text = TempNewMessage.firstElementChild.textContent;
-                newMessage.from = messageFrom;
+                newMessage = new Plain(tempNewMessage, messageFrom);
                 
-                reply(newMessage);
+                // reply(newMessage);
                 
                 break;
             }
             case 'app': {
-                newMessage.href = decodeURIComponent(TempNewMessage.href.match(/https%3A%2F%2F[^.]*.ele.me[^&]*/));
-                newMessage.title = TempNewMessage.children[0].textContent;
-                newMessage.image = TempNewMessage.children[1].src;
-                newMessage.content = TempNewMessage.children[2].textContent;
-                newMessage.from = messageFrom;
+                newMessage = new App(tempNewMessage, messageFrom);
                 
-                reply(newMessage);
+                // reply(newMessage);
                 
                 break;
             }
             case 'card': {
-                TempNewMessage.click();
-                var userCardInfo = document.querySelector('#mmpop_profile > .profile_mini > .profile_mini_bd > .nickname_area');
-                var userNickName = userCardInfo.children[1].textContent;
+                newMessage = new Card(tempNewMessage, messageFrom);
                 
+                tempNewMessage.click();
+                var userCardInfo = document.querySelector('#mmpop_profile > .profile_mini > .profile_mini_bd > .nickname_area');
                 userCardInfo.children[0].click();
-                newMessage.nickname = userNickName;
-                newMessage.from = messageFrom;
                 
                 // reply(newMessage);
+                
+                break;
             }
         }
 
@@ -139,19 +139,7 @@ function getFormNewMessages(count) {
 
 function showMessages(messages) {
     for (var message of messages) {
-        switch (message.type) {
-            case 'plain': {
-                NativeConsole.log(`收到文本消息，from -> [${message.from}]，text -> [${message.text}]`);
-                break;
-            }
-            case 'app': {
-                NativeConsole.log(`收到应用消息，from -> [${message.from}]，href -> [${message.href}]，title -> [${message.title}]，image -> [${message.image}]，content -> [${message.content}]`);
-                break;
-            }
-            case 'card': {
-                NativeConsole.log(`收到好友请求消息，from -> [${message.from}]，nickname -> [${message.nickname}]`);
-            }
-        }
+        NativeConsole.log('收到' + message);
     }
 }
 
