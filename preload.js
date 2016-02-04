@@ -108,7 +108,7 @@ function getFormNewMessages(count) {
                 break;
             }
             case 'app': {
-                newMessage.href = decodeURIComponent(TempNewMessage.href.match(/https%3A%2F%2Fh.ele.me.*/));
+                newMessage.href = decodeURIComponent(TempNewMessage.href.match(/https%3A%2F%2F[^.]*.ele.me[^&]*/));
                 newMessage.title = TempNewMessage.children[0].textContent;
                 newMessage.image = TempNewMessage.children[1].src;
                 newMessage.content = TempNewMessage.children[2].textContent;
