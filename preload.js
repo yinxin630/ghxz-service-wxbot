@@ -91,6 +91,7 @@ function getAllNewMessages() {
 function getFormNewMessages(count) {
     var messages = [];
     var currentFormMessages = document.querySelectorAll('.you > .content > .bubble > .bubble_cont > *');
+    var messageFrom = document.querySelector('.title_name').textContent;
 
     for (var mIndex = 0; mIndex < count; mIndex++) {
         var TempNewMessage = currentFormMessages.item(currentFormMessages.length - count + mIndex);
@@ -100,6 +101,7 @@ function getFormNewMessages(count) {
         switch (newMessage.type) {
             case 'plain': {
                 newMessage.text = TempNewMessage.firstElementChild.textContent;
+                newMessage.from = messageFrom;
                 
                 reply(newMessage);
                 
@@ -110,6 +112,7 @@ function getFormNewMessages(count) {
                 newMessage.title = TempNewMessage.children[0].textContent;
                 newMessage.image = TempNewMessage.children[1].src;
                 newMessage.content = TempNewMessage.children[2].textContent;
+                newMessage.from = messageFrom;
                 
                 reply(newMessage);
                 
@@ -127,11 +130,11 @@ function showMessages(messages) {
     for (var message of messages) {
         switch (message.type) {
             case 'plain': {
-                NativeConsole.log(`收到文本消息，text -> [${message.text}]`);
+                NativeConsole.log(`收到文本消息，from -> [${message.from}]，text -> [${message.text}]`);
                 break;
             }
             case 'app': {
-                NativeConsole.log(`收到应用消息，href -> [${message.href}]，title -> [${message.title}]，image -> [${message.image}]，content -> [${message.content}]`);
+                NativeConsole.log(`收到应用消息，from -> [${message.from}]，href -> [${message.href}]，title -> [${message.title}]，image -> [${message.image}]，content -> [${message.content}]`);
                 break;
             }
         }
