@@ -12,4 +12,8 @@ module.exports = class Plain extends BasicMessage {
     toString() {
         return `文本消息：from -> [${this.from}] | text -> [${this.text}]`;
     }
+    
+    handle(reply) {
+        reply(this);
+    }
 }

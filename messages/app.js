@@ -15,4 +15,8 @@ module.exports = class App extends BasicMessage {
     toString() {
         return `应用消息：from -> [${this.from}] | href -> [${this.href}] | title -> [${this.title}] | image -> [${this.image}] | content -> [${this.content}]`;
     }
+    
+    handle(reply) {
+        reply(this);
+    }
 }

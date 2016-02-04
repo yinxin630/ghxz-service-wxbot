@@ -106,31 +106,20 @@ function getFormNewMessages(count) {
         switch (type) {
             case 'plain': {
                 newMessage = new Plain(tempNewMessage, messageFrom);
-                
-                // reply(newMessage);
-                
+                newMessage.handle(reply);
                 break;
             }
             case 'app': {
                 newMessage = new App(tempNewMessage, messageFrom);
-                
-                // reply(newMessage);
-                
+                newMessage.handle(reply);
                 break;
             }
             case 'card': {
                 newMessage = new Card(tempNewMessage, messageFrom);
-                
-                tempNewMessage.click();
-                var userCardInfo = document.querySelector('#mmpop_profile > .profile_mini > .profile_mini_bd > .nickname_area');
-                userCardInfo.children[0].click();
-                
-                // reply(newMessage);
-                
+                newMessage.handle(tempNewMessage, document);
                 break;
             }
         }
-
         messages.push(newMessage);
     }
 
