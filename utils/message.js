@@ -17,7 +17,7 @@ module.exports = {
             
             // 开始获取当前窗体消息
             var currentFormMessages = document.querySelectorAll('.you > .content > .bubble > .bubble_cont > *');
-            var getMessages = Message.getFormNewMessages(currentFormMessages.length - currentFormMessagesNumber);
+            var getMessages = yield * Message.getFormNewMessages(currentFormMessages.length - currentFormMessagesNumber);
             messages.push(...getMessages);
             currentFormMessagesNumber = currentFormMessages.length;
         
@@ -31,7 +31,7 @@ module.exports = {
                 tempChatForm.click();
                 yield sleep(50);
 
-                var otherMessages = Message.getFormNewMessages(reddotNumber);
+                var otherMessages = yield * Message.getFormNewMessages(reddotNumber);
                 messages.push(...otherMessages);
 
                 var currentFormMessages = document.querySelectorAll('.you > .content > .bubble > .bubble_cont > *');
@@ -41,7 +41,7 @@ module.exports = {
         }
     },
 
-    getFormNewMessages(count) {
+    * getFormNewMessages(count) {
         var messages = [];
         var currentFormMessages = document.querySelectorAll('.you > .content > .bubble > .bubble_cont > *');
         var messageFrom = document.querySelector('.title_name').textContent;
@@ -59,7 +59,7 @@ module.exports = {
                 }
                 case 'app': {
                     newMessage = new App(tempNewMessage, messageFrom);
-                    newMessage.handle(this.reply);
+                    yield * newMessage.handle(this.reply);
                     break;
                 }
                 case 'card': {
