@@ -1,26 +1,12 @@
 'use strict';
 
 const CO = require('co');
-const Electron = require('electron');
-const Clipboard = Electron.clipboard;
-const Plain = require('./messages/plain.js');
-const App = require('./messages/app.js');
-const Card = require('./messages/card.js');
+const sleep = require('./utils/sleep.js');
+const Message = require('./utils/message.js');
 
 // 微信网页版替换了console对象，需要再预加载中保留原生console对象
-const NativeConsole = window.console;
-
-/**
- * 将执行线程暂停一段时间
- * @param 暂停的时间，单位毫秒ms
- */
-function sleep(duration) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve();
-        }, duration);
-    });
-}
+global.NativeConsole = window.console;
+// global.document = document;
 
 // 主流程
 CO(function* () {
@@ -30,10 +16,10 @@ CO(function* () {
         yield sleep(500);
     }
 
-    var getMessagesTask = getAllNewMessages();
+    var getMessagesTask = Message.getAllNewMessages();
     while (true) {
         var newMessages = yield* getMessagesTask();
-        showMessages(newMessages);
+        Message.showMessages(newMessages);
 
         yield sleep(1000);
     }
@@ -60,87 +46,4 @@ function checkLoginStatus() {
         NativeConsole.log('页面未加载完毕');
     }
     return false;
-}
-
-function getAllNewMessages() {
-    var currentFormMessagesNumber = 0;
-    return function* () {
-        var messages = [];
-        
-        // 开始获取当前窗体消息
-        var currentFormMessages = document.querySelectorAll('.you > .content > .bubble > .bubble_cont > *');
-        var getMessages = getFormNewMessages(currentFormMessages.length - currentFormMessagesNumber);
-        messages.push(...getMessages);
-        currentFormMessagesNumber = currentFormMessages.length;
-        
-        // 开始获取其它窗体消息
-        var newMessageReddots = document.querySelectorAll('.web_wechat_reddot_middle');
-        for (var dIndex = 0; dIndex < newMessageReddots.length; dIndex++) {
-
-            var reddotNumber = Number.parseInt(newMessageReddots.item(dIndex).textContent)
-            var tempChatForm = newMessageReddots.item(dIndex).parentElement.parentElement;
-
-            tempChatForm.click();
-            yield sleep(50);
-
-            var otherMessages = getFormNewMessages(reddotNumber);
-            messages.push(...otherMessages);
-
-            var currentFormMessages = document.querySelectorAll('.you > .content > .bubble > .bubble_cont > *');
-            currentFormMessagesNumber = currentFormMessages.length;
-        }
-        return messages;
-    }
-}
-
-function getFormNewMessages(count) {
-    var messages = [];
-    var currentFormMessages = document.querySelectorAll('.you > .content > .bubble > .bubble_cont > *');
-    var messageFrom = document.querySelector('.title_name').textContent;
-
-    for (var mIndex = 0; mIndex < count; mIndex++) {
-        var tempNewMessage = currentFormMessages.item(currentFormMessages.length - count + mIndex);
-        var newMessage = undefined;
-        
-        var type = tempNewMessage.attributes.getNamedItem('class').textContent;
-        switch (type) {
-            case 'plain': {
-                newMessage = new Plain(tempNewMessage, messageFrom);
-                newMessage.handle(reply);
-                break;
-            }
-            case 'app': {
-                newMessage = new App(tempNewMessage, messageFrom);
-                newMessage.handle(reply);
-                break;
-            }
-            case 'card': {
-                newMessage = new Card(tempNewMessage, messageFrom);
-                newMessage.handle(tempNewMessage, document);
-                break;
-            }
-        }
-        messages.push(newMessage);
-    }
-
-    return messages;
-}
-
-function showMessages(messages) {
-    for (var message of messages) {
-        NativeConsole.log('收到' + message);
-    }
-}
-
-function reply(message) {
-    var editArea = document.querySelector('#editArea');
-    var sendButton = document.querySelector('.btn_send');
-
-    Clipboard.clear();
-    Clipboard.writeText(message.type == 'plain' ? message.text : message.href);
-
-    editArea.focus();
-    document.execCommand('paste');
-
-    sendButton.click();
 }

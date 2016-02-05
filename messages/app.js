@@ -1,7 +1,6 @@
 'use strict';
 
 const BasicMessage = require('./basicMessage');
-
 module.exports = class App extends BasicMessage {
     constructor(messageDom, messageFrom) {
         super(messageDom, messageFrom);
@@ -16,7 +15,7 @@ module.exports = class App extends BasicMessage {
         return `应用消息：from -> [${this.from}] | href -> [${this.href}] | title -> [${this.title}] | image -> [${this.image}] | content -> [${this.content}]`;
     }
     
-    handle(reply) {
-        reply(this);
+    handle(replyFunction) {
+        replyFunction(this.href);
     }
 }
