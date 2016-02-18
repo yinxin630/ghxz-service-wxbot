@@ -4,7 +4,7 @@ const sleep = require('./sleep.js');
 const Electron = require('electron');
 const Clipboard = Electron.clipboard;
 const Plain = require('../messages/plain.js');
-const App = require('../messages/application.js');
+const App = require('../messages/app.js');
 const Card = require('../messages/card.js');
 
 module.exports = {
