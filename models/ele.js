@@ -4,10 +4,17 @@ const EleSchema = new Mongoose.Schema({
     href: {
         type: String,
         unique: true,
+        required: true,
     },
     
     usageCount: {
-        type: Number
+        type: Number,
+        default: 0,
+    },
+    
+    index: {
+        type: Number,
+        required: true,
     }
 });
 

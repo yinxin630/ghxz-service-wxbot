@@ -17,23 +17,35 @@ module.exports = class Plain extends BasicMessage {
     }
     
     * handle(replyFunction) {
-        // NativeConsole.log('handle text:', this.text);
-        
-        // if (Keyword.matchEle(this.text)) {
-        //     var userResult = yield User.findOne({nickname: this.from});
-        //     if (!userResult) {
-        //         userResult = yield User.create({
-        //             nickname: this.from,
-        //             usageIndex: 0
-        //         });
-        //     }
+        if (Keyword.matchEle(this.text)) {
+            let userResult = yield User.findOne({nickname: this.from});
+            if (!userResult) {
+                userResult = yield User.create({
+                    nickname: this.from,
+                });
+            }
             
-        //     NativeConsole.log('已用数量：' + userResult.usageIndex);
+            const availablePacket = yield Ele.findOne({
+                usageCount: {
+                    $lt: 10
+                },
+                index: {
+                    $gt: userResult.usageIndex
+                }
+            });
             
-        //     const updatedResult = yield Ele.update({nickname: this.from}, {usageIndex: userResult.usageIndex - 1});
+            if (!availablePacket) {
+                replyFunction('无可用红包，请等待他人分享，欢迎多多分享哦~');
+                return;
+            }
+            replyFunction(`赏你一个红包，快去订餐吧:${availablePacket.href}`);
             
-        //     return;
-        // }
+            userResult.usageIndex = availablePacket.index;
+            yield userResult.save();
+            
+            availablePacket.usageCount++;
+            yield availablePacket.save();
+        }
         replyFunction(this.text);
     }
 }

@@ -4,10 +4,12 @@ const UserSchema = new Mongoose.Schema({
     nickname: {
         type: String,
         unique: true,
+        required: true,
     },
     
     usageIndex: {
-        type: Number
+        type: Number,
+        default: -1,
     }
 });
 

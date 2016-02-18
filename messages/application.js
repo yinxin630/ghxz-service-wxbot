@@ -19,9 +19,11 @@ module.exports = class App extends BasicMessage {
     
     * handle(replyFunction) {
         try {
+            const allEleResults = yield Ele.find();
+            
             const insertedEles = yield Ele.create({
                 href: this.href,
-                usageCount: 0
+                index: allEleResults.length
             });
             
             if (!insertedEles) {
