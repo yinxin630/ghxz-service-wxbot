@@ -1,6 +1,6 @@
 const Mongoose = require('mongoose');
 
-const eleSchema = new Mongoose.Schema({
+const EleSchema = new Mongoose.Schema({
     href: {
         type: String,
         unique: true,
@@ -11,4 +11,4 @@ const eleSchema = new Mongoose.Schema({
     }
 });
 
-module.exports = Mongoose.model('ele', eleSchema);
+module.exports = Mongoose.model('ele', EleSchema);

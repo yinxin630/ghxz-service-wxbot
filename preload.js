@@ -6,7 +6,11 @@ const Message = require('./utils/message.js');
 
 // 微信网页版替换了console对象，需要再预加载中保留原生console对象
 global.NativeConsole = window.console;
-// global.document = document;
+
+// Mongoose连接在窗体出现前后不同，此处为了一加载微信窗体就建立连接，供后续业务使用
+const Mongoose = require('mongoose');
+const mongodbAddress = require('./config/mongodb.js');
+Mongoose.connect(mongodbAddress);
 
 // 主流程
 CO(function* () {

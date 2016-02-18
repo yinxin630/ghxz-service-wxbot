@@ -1,8 +1,7 @@
 'use strict';
 
-const BasicMessage = require('./basicMessage');
+const BasicMessage = require('./basicMessage.js');
 const Ele = require('../models/ele.js');
-require('../utils/db.js');
 
 module.exports = class App extends BasicMessage {
     constructor(messageDom, messageFrom) {
@@ -27,6 +26,7 @@ module.exports = class App extends BasicMessage {
             
             if (!insertedEles) {
                 NativeConsole.log(`create new ele red packet action return undefined.`);
+                replyFunction('红包收录失败，请联系管理员！');
                 return;
             }
             NativeConsole.log(`store new red packet success: ${insertedEles}`);
@@ -34,7 +34,7 @@ module.exports = class App extends BasicMessage {
         }
         catch(err) {
             if (err.errmsg.match('duplicate key error collection')) {
-                replyFunction('该红包已被收录，谢谢参与！');
+                replyFunction('该红包已存在，谢谢参与！');
                 return;
             }
             NativeConsole.log('store new red packet fail！' + err);

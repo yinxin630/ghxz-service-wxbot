@@ -1,6 +1,6 @@
 const Mongoose = require('mongoose');
 
-const userSchema = new Mongoose.Schema({
+const UserSchema = new Mongoose.Schema({
     nickname: {
         type: String,
         unique: true,
@@ -11,4 +11,4 @@ const userSchema = new Mongoose.Schema({
     }
 });
 
-module.exports = Mongoose.model('ele', userSchema);
+module.exports = Mongoose.model('user', UserSchema);

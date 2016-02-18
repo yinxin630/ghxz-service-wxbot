@@ -4,7 +4,7 @@ const sleep = require('./sleep.js');
 const Electron = require('electron');
 const Clipboard = Electron.clipboard;
 const Plain = require('../messages/plain.js');
-const App = require('../messages/app.js');
+const App = require('../messages/application.js');
 const Card = require('../messages/card.js');
 
 module.exports = {
@@ -20,7 +20,7 @@ module.exports = {
             var getMessages = yield * Message.getFormNewMessages(currentFormMessages.length - currentFormMessagesNumber);
             messages.push(...getMessages);
             currentFormMessagesNumber = currentFormMessages.length;
-        
+            
             // 开始获取其它窗体消息
             var newMessageReddots = document.querySelectorAll('.web_wechat_reddot_middle');
             for (var dIndex = 0; dIndex < newMessageReddots.length; dIndex++) {
@@ -28,6 +28,7 @@ module.exports = {
                 var reddotNumber = Number.parseInt(newMessageReddots.item(dIndex).textContent)
                 var tempChatForm = newMessageReddots.item(dIndex).parentElement.parentElement;
 
+                // 点击有新消息的联系人，延时是为了等待DOM渲染
                 tempChatForm.click();
                 yield sleep(50);
 
@@ -54,7 +55,7 @@ module.exports = {
             switch (type) {
                 case 'plain': {
                     newMessage = new Plain(tempNewMessage, messageFrom);
-                    newMessage.handle(this.reply);
+                    yield * newMessage.handle(this.reply);
                     break;
                 }
                 case 'app': {
