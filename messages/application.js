@@ -7,7 +7,7 @@ module.exports = class App extends BasicMessage {
     constructor(messageDom, messageFrom) {
         super(messageDom, messageFrom);
         
-        this.href = decodeURIComponent(messageDom.href.match(/https%3A%2F%2F[^.]*.ele.me[^&]*/));
+        this.href = decodeURIComponent(messageDom.href.match(/https%3A%2F%2F.*.ele.[^&]*/));
         this.title = messageDom.children[0].textContent;
         this.image = messageDom.children[1].src;
         this.content = messageDom.children[2].textContent;
