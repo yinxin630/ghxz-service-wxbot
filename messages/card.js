@@ -1,8 +1,8 @@
 'use strict';
 
-const BasicMessage = require('./basicMessage.js');
+const Basic = require('./basic.js');
 
-module.exports = class Card extends BasicMessage {
+module.exports = class Card extends Basic {
     constructor(messageDom, messageFrom) {
         super(messageDom, messageFrom);
         

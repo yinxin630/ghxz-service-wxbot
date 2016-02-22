@@ -1,23 +1,21 @@
 'use strict';
 
-const BasicMessage = require('./basicMessage.js');
+const Basic = require('./basic.js');
 const Packet = require('../models/packet.js');
-const Domain = require('../utils/domain.js');
+const checkDomain = require('../utils/domain.js');
 
-module.exports = class App extends BasicMessage {
+module.exports = class App extends Basic {
     constructor(messageDom, messageFrom) {
         super(messageDom, messageFrom);
         
-        let result = null;
-        result = Domain.matchEle(messageDom.href);
+        const result = checkDomain(messageDom.href);
         if (result) {
-            this.href = decodeURIComponent(result);
-            this.packetType = 'ele';
+            this.href = decodeURIComponent(result.href);
+            this.packetType = result.type;
         }
-        result = Domain.matchDidi(messageDom.href);
-        if (result) {
-            this.href = decodeURIComponent(result);
-            this.packetType = 'didi';
+        else {
+            this.href = 'undefined';
+            this.packetType = 'undefined';
         }
         
         this.title = messageDom.children[0].textContent;
@@ -33,18 +31,19 @@ module.exports = class App extends BasicMessage {
         try {
             const packetCount = yield Packet.find({type: this.packetType}).count();
             
+             NativeConsole.log('before create.');
             const insertedResult = yield Packet.create({
                 href: this.href,
                 type: this.packetType,
                 index: packetCount,
             });
+            NativeConsole.log('end create.');
             
             if (!insertedResult) {
                 NativeConsole.log(`create new red packet action return undefined.`);
                 replyFunction('红包收录失败，请联系管理员！');
                 return;
             }
-            NativeConsole.log(`store new red packet success: ${insertedResult}`);
             replyFunction('您的红包已被收录，谢谢参与！');
         }
         catch(err) {

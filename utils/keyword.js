@@ -1,14 +1,12 @@
-const keyWords = {
-    ele: ['ele', '饿了么', 'eleme'],
-    didi: ['didi', '滴滴'],
-}
+'use strict'
 
-module.exports = {
-    matchEle: function(text) {
-        return keyWords.ele.find(x => x === text) !== undefined;
-    },
-    
-    matchDidi: function(text) {
-        return keyWords.didi.find(x => x === text) !== undefined;
+const Types = require('../config/types.js');
+
+module.exports = function (text) {
+    for (let key in Types) {
+        if (Types[key].keywords.find(x => x === text) !== undefined) {
+            return key;
+        }
     }
+    return undefined;
 }

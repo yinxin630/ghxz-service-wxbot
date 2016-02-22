@@ -1,32 +1,18 @@
 'use strict'
 
-const domains = {
-    ele: [
-        /https?%3A%2F%2F.*.ele.[^&]*/,
-    ],
-    didi: [
-        /https?%3A%2F%2F.*.xiaojukeji.[^&]*/,
-    ],
-}
+const Types = require('../config/types.js');
 
-module.exports = {
-    matchEle: function(url) {
-        for (let regex of domains.ele) {
+module.exports = function (url) {
+    for (let key in Types) {
+        for (let regex of Types[key].domains) {
             let result = url.match(regex);
             if (result) {
-                return result;
+                return {
+                    href: result,
+                    type: key,
+                };
             }
         }
-        return null;
-    },
-    
-    matchDidi: function(url) {
-        for (let regex of domains.didi) {
-            let result = url.match(regex);
-            if (result) {
-                return result;
-            }
-        }
-        return false;
     }
+    return undefined;
 }
