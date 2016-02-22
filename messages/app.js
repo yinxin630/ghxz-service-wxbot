@@ -2,12 +2,24 @@
 
 const BasicMessage = require('./basicMessage.js');
 const Ele = require('../models/ele.js');
+const Domain = require('../utils/domain.js');
 
 module.exports = class App extends BasicMessage {
     constructor(messageDom, messageFrom) {
         super(messageDom, messageFrom);
         
-        this.href = decodeURIComponent(messageDom.href.match(/https%3A%2F%2F.*.ele.[^&]*/));
+        let result = null;
+        result = Domain.matchEle(messageDom.href);
+        if (result) {
+            this.href = decodeURIComponent(result);
+            this.packetType = 'ele';
+        }
+        result = Domain.matchDidi(messageDom.href);
+        if (result) {
+            this.href = decodeURIComponent(result);
+            this.packetType = 'didi';
+        }
+        
         this.title = messageDom.children[0].textContent;
         this.image = messageDom.children[1].src;
         this.content = messageDom.children[2].textContent;
@@ -18,6 +30,8 @@ module.exports = class App extends BasicMessage {
     }
     
     * handle(replyFunction) {
+        NativeConsole.log(this.packetType);
+        return;
         try {
             const allEleResults = yield Ele.find();
             
