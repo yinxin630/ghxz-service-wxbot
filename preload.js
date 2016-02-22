@@ -22,7 +22,7 @@ CO(function* () {
 
     var getMessagesTask = Message.getAllNewMessages();
     while (true) {
-        var newMessages = yield* getMessagesTask();
+        let newMessages = yield* getMessagesTask();
         Message.showMessages(newMessages);
 
         yield sleep(1000);
@@ -38,7 +38,7 @@ function checkLoginStatus() {
         return true;
     }
     else if (qrcodeDiv) {
-        var qrcodeImage = qrcodeDiv.firstElementChild;
+        let qrcodeImage = qrcodeDiv.firstElementChild;
         if (qrcodeImage && qrcodeImage.src.match(/.*login.weixin.qq.com\/qrcode\/.*/)) {
             NativeConsole.log(`获取到二维码 -> [${qrcodeDiv.firstElementChild.src}] 请扫一扫登录`);
         }

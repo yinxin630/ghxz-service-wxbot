@@ -10,7 +10,7 @@ app.on('window-all-closed', function() {
 });
 
 app.on('ready', function() {
-    var mainWindow = new BrowserWindow({
+    let mainWindow = new BrowserWindow({
         width: 1000,
         height: 768,
         webPreferences: {

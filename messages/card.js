@@ -15,7 +15,7 @@ module.exports = class Card extends BasicMessage {
     
     handle(messageDom, document) {
         messageDom.click();
-        var userCard = document.querySelector('#mmpop_profile > .profile_mini > .profile_mini_bd > .nickname_area');
+        let userCard = document.querySelector('#mmpop_profile > .profile_mini > .profile_mini_bd > .nickname_area');
         userCard.children[0].click();
     }
 }
