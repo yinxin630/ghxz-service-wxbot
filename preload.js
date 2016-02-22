@@ -14,15 +14,15 @@ Mongoose.connect(mongodbAddress);
 
 // 主流程
 CO(function* () {
-    var hasLogged = false;
-    while (!hasLogged) {
-        hasLogged = checkLoginStatus();
+    let isLogged = false;
+    while (!isLogged) {
+        isLogged = checkLoginStatus();
         yield sleep(500);
     }
 
-    var getMessagesTask = Message.getAllNewMessages();
+    let getAllNewMessagesTask = Message.getAllNewMessages();
     while (true) {
-        let newMessages = yield* getMessagesTask();
+        let newMessages = yield* getAllNewMessagesTask();
         Message.showMessages(newMessages);
 
         yield sleep(1000);
@@ -30,8 +30,8 @@ CO(function* () {
 });
 
 function checkLoginStatus() {
-    var qrcodeDiv = document.querySelector('.qrcode');
-    var chatItemDiv = document.querySelector('.chat_item')
+    let qrcodeDiv = document.querySelector('.qrcode');
+    let chatItemDiv = document.querySelector('.chat_item')
 
     if (chatItemDiv) {
         NativeConsole.log('用户已登录');

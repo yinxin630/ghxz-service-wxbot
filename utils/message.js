@@ -17,8 +17,8 @@ module.exports = {
             
             // 开始获取当前窗体消息
             let currentFormMessages = document.querySelectorAll('.you > .content > .bubble > .bubble_cont > *');
-            let getMessages = yield * Message.getFormNewMessages(currentFormMessages.length - currentFormMessagesNumber);
-            messages.push(...getMessages);
+            let newMessages = yield * Message.getFormNewMessages(currentFormMessages.length - currentFormMessagesNumber);
+            messages.push(...newMessages);
             currentFormMessagesNumber = currentFormMessages.length;
             
             // 开始获取其它窗体消息
