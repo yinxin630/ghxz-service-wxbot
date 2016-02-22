@@ -1,7 +1,7 @@
 'use strict';
 
 const BasicMessage = require('./basicMessage.js');
-const Ele = require('../models/ele.js');
+const Packet = require('../models/packet.js');
 const Domain = require('../utils/domain.js');
 
 module.exports = class App extends BasicMessage {
@@ -30,30 +30,29 @@ module.exports = class App extends BasicMessage {
     }
     
     * handle(replyFunction) {
-        NativeConsole.log(this.packetType);
-        return;
         try {
-            const allEleResults = yield Ele.find();
+            const packetCount = yield Packet.find({type: this.packetType}).count();
             
-            const insertedEles = yield Ele.create({
+            const insertedResult = yield Packet.create({
                 href: this.href,
-                index: allEleResults.length
+                type: this.packetType,
+                index: packetCount,
             });
             
-            if (!insertedEles) {
-                NativeConsole.log(`create new ele red packet action return undefined.`);
+            if (!insertedResult) {
+                NativeConsole.log(`create new red packet action return undefined.`);
                 replyFunction('红包收录失败，请联系管理员！');
                 return;
             }
-            NativeConsole.log(`store new red packet success: ${insertedEles}`);
+            NativeConsole.log(`store new red packet success: ${insertedResult}`);
             replyFunction('您的红包已被收录，谢谢参与！');
         }
         catch(err) {
+            NativeConsole.log('store new red packet fail！' + err);
             if (err.errmsg.match('duplicate key error collection')) {
                 replyFunction('该红包已存在，谢谢参与！');
                 return;
             }
-            NativeConsole.log('store new red packet fail！' + err);
         }
     }
 }

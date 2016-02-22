@@ -1,9 +1,14 @@
 const Mongoose = require('mongoose');
 
-const EleSchema = new Mongoose.Schema({
+const PacketSchema = new Mongoose.Schema({
     href: {
         type: String,
         unique: true,
+        required: true,
+    },
+    
+    type: {
+        type: String,
         required: true,
     },
     
@@ -18,4 +23,4 @@ const EleSchema = new Mongoose.Schema({
     }
 });
 
-module.exports = Mongoose.model('ele', EleSchema);
+module.exports = Mongoose.model('packet', PacketSchema);
