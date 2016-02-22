@@ -28,28 +28,33 @@ module.exports = class App extends Basic {
     }
     
     * handle(replyFunction) {
-        try {
-            const packetCount = yield Packet.find({type: this.packetType}).count();
-            
-            const insertedResult = yield Packet.create({
-                href: this.href,
-                type: this.packetType,
-                index: packetCount,
-            });
-            
-            if (!insertedResult) {
-                NativeConsole.log(`create new red packet action return undefined.`);
-                replyFunction('红包收录失败，请联系管理员！');
-                return;
-            }
-            replyFunction('您的红包已被收录，谢谢参与！');
+        const packetCount = yield Packet.find({type: this.packetType}).count();
+        
+        const insertedResult = yield createPacket(this, packetCount);
+        if (!insertedResult) {
+            NativeConsole.log(`create new red packet action return undefined.`);
+            replyFunction('红包收录失败，请联系管理员！');
+            return;
         }
-        catch(err) {
-            NativeConsole.log('store new red packet fail！' + err);
-            if (err.errmsg.match('duplicate key error collection')) {
-                replyFunction('该红包已存在，谢谢参与！');
-                return;
-            }
+        else if (insertedResult === 'duplicate key error collection') {
+            replyFunction('您分享的红包已存在，谢谢参与！！');
+            return;
         }
+        replyFunction('您的红包已被收录，谢谢参与！');
     }
 }
+
+function createPacket (packet, index) {
+    return new Promise((resolve) => {
+        Packet.create({
+            href: packet.href,
+            type: packet.packetType,
+            index: index,
+        }).then(result => {
+            resolve(result);
+        }).catch(err => {
+            NativeConsole.log('store new red packet fail！' + err);
+            resolve(err.errmsg.match('duplicate key error collection') || undefined);
+        })
+    });
+};
