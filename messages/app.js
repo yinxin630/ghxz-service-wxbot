@@ -31,13 +31,11 @@ module.exports = class App extends Basic {
         try {
             const packetCount = yield Packet.find({type: this.packetType}).count();
             
-             NativeConsole.log('before create.');
             const insertedResult = yield Packet.create({
                 href: this.href,
                 type: this.packetType,
                 index: packetCount,
             });
-            NativeConsole.log('end create.');
             
             if (!insertedResult) {
                 NativeConsole.log(`create new red packet action return undefined.`);
