@@ -7,10 +7,15 @@ const UserSchema = new Mongoose.Schema({
         required: true,
     },
     
-    usageIndex: {
+    eleUsageIndex: {
         type: Number,
         default: -1,
-    }
+    },
+    
+    didiUsageIndex: {
+        type: Number,
+        default: -1,
+    },
 });
 
 module.exports = Mongoose.model('user', UserSchema);
