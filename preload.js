@@ -29,6 +29,7 @@ CO(function* () {
     }
 });
 
+var waitLogin = false;
 function checkLoginStatus() {
     let qrcodeDiv = document.querySelector('.qrcode');
     let chatItemDiv = document.querySelector('.chat_item')
@@ -40,9 +41,13 @@ function checkLoginStatus() {
     else if (qrcodeDiv) {
         let qrcodeImage = qrcodeDiv.firstElementChild;
         if (qrcodeImage && qrcodeImage.src.match(/.*login.weixin.qq.com\/qrcode\/.*/)) {
-            NativeConsole.log(`获取到二维码 -> [${qrcodeDiv.firstElementChild.src}] 请扫一扫登录`);
+            if (!waitLogin) {
+                NativeConsole.log(`获取到二维码 -> [${qrcodeDiv.firstElementChild.src}] 请扫一扫登录`);
+            }
+            waitLogin = true;
         }
         else {
+            waitLogin = false;
             NativeConsole.log('用户未登录，获取登录二维码');
         }
     }
