@@ -28,6 +28,11 @@ module.exports = class App extends Basic {
     }
     
     * handle(replyFunction) {
+        if (this.packetType === 'undefined') {
+            replyFunction('这是我不支持的红包类型。');
+            return;
+        }
+        
         const packetCount = yield Packet.find({type: this.packetType}).count();
         
         const insertedResult = yield createPacket(this, packetCount);
@@ -37,7 +42,7 @@ module.exports = class App extends Basic {
             return;
         }
         else if (insertedResult === 'duplicate key error collection') {
-            replyFunction('您分享的红包已存在，谢谢参与！！');
+            replyFunction('您分享的红包已存在，谢谢参与！');
             return;
         }
         replyFunction('您的红包已被收录，谢谢参与！');
