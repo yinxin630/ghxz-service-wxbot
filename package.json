@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron . --enable-logging"
   },
   "keywords": [
     "ghxz",
@@ -24,7 +24,6 @@
   },
   "dependencies": {
     "co": "^4.6.0",
-    "electron-prebuilt": "^0.36.7",
     "mongoose": "^4.4.1"
   }
 }
